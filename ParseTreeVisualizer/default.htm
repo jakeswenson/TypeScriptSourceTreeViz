@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Parse Tree Visualizer</title>
+    <link rel="stylesheet" href="/Content/bootstrap.css" type="text/css" />
+    <script src="/Scripts/d3.v3.js"></script>
+    <script src="/Scripts/jquery-2.0.3.js"></script>
+    <script src="/Scripts/bootstrap.js"></script>
+    <script src="typescript.js"></script>
+    <script src="app.js"></script>
+    <style type="text/css">
+        .node circle {
+            cursor: pointer;
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 1.5px;
+        }
+
+        .node text {
+            font-size: 11px;
+        }
+
+        path.link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Look at the Tree</h1>
+        <textarea class="col-md-12" id="source" placeholder="Type/Paste typescript here" ></textarea>
+        <div class="col-md-12" id="tree"></div>
+    </div>
+</body>
+</html>
