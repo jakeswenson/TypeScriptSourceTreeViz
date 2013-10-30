@@ -43,7 +43,7 @@ var D3TreeBuilder = (function (_super) {
 
     D3TreeBuilder.prototype.addChild = function (type, name) {
         var currentChildren = this.currentChildren;
-        var child = { type: type, name: name ? name + ': ' + type : type, children: this.pushChildren() };
+        var child = { type: type, name: name || type, children: this.pushChildren() };
         if (currentChildren) {
             currentChildren.push(child);
         }
@@ -73,26 +73,50 @@ var D3TreeBuilder = (function (_super) {
     };
 
     D3TreeBuilder.prototype.visitClassDeclaration = function (node) {
-        this.addChild('ClassDeclarationSyntax', node.identifier.text());
+        this.addChild('ClassDeclarationSyntax', "class " + node.identifier.text());
         _super.prototype.visitClassDeclaration.call(this, node);
         this.popChildren();
     };
 
+    D3TreeBuilder.prototype.visitEnumDeclaration = function (node) {
+        this.addChild('EnumDeclarationSyntax', 'enum ' + node.identifier.text());
+        _super.prototype.visitEnumDeclaration.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitEnumElement = function (node) {
+        this.addChild('EnumElementSyntax', '(enum member)');
+        _super.prototype.visitEnumElement.call(this, node);
+        this.popChildren();
+    };
+
     D3TreeBuilder.prototype.visitInterfaceDeclaration = function (node) {
-        this.addChild('InterfaceDeclarationSyntax', node.identifier.text());
+        this.addChild('InterfaceDeclarationSyntax', "interface " + node.identifier.text());
         _super.prototype.visitInterfaceDeclaration.call(this, node);
         this.popChildren();
     };
 
     D3TreeBuilder.prototype.visitModuleDeclaration = function (node) {
-        this.addChild('ModuleDeclarationSyntax');
+        this.addChild('ModuleDeclarationSyntax', "module " + node.moduleName.fullText());
         _super.prototype.visitModuleDeclaration.call(this, node);
         this.popChildren();
     };
 
     D3TreeBuilder.prototype.visitFunctionDeclaration = function (node) {
-        this.addChild('FunctionDeclarationSyntax', node.identifier.text());
+        this.addChild('FunctionDeclarationSyntax', "function " + node.identifier.text());
         _super.prototype.visitFunctionDeclaration.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitMemberFunctionDeclaration = function (node) {
+        this.addChild('MemberFunctionDeclarationSyntax', node.propertyName.text() + "() { ... }");
+        _super.prototype.visitMemberFunctionDeclaration.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitParameterList = function (node) {
+        this.addChild('ParameterListSyntax', '(function parameters)');
+        _super.prototype.visitParameterList.call(this, node);
         this.popChildren();
     };
 
@@ -109,15 +133,193 @@ var D3TreeBuilder = (function (_super) {
     };
 
     D3TreeBuilder.prototype.visitVariableDeclarator = function (node) {
-        this.addChild('VariableDeclaratorSyntax', node.identifier.text());
+        this.addChild('VariableDeclaratorSyntax', 'var ' + node.identifier.text());
         _super.prototype.visitVariableDeclarator.call(this, node);
         this.popChildren();
     };
 
     D3TreeBuilder.prototype.visitTypeParameterList = function (node) {
+        this.addChild('TypeParameterListSyntax');
+        _super.prototype.visitTypeParameterList.call(this, node);
+        this.popChildren();
     };
 
     D3TreeBuilder.prototype.visitTypeParameter = function (node) {
+        this.addChild('TypeParameterSyntax');
+        _super.prototype.visitTypeParameter.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitIfStatement = function (node) {
+        this.addChild('IfStatementSyntax', 'if');
+        _super.prototype.visitIfStatement.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitMemberAccessExpression = function (node) {
+        this.addChild('MemberAccessExpressionSyntax', 'Dot');
+        _super.prototype.visitMemberAccessExpression.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitTypeOfExpression = function (node) {
+        this.addChild('TypeOfExpressionSyntax', 'typeof');
+        _super.prototype.visitTypeOfExpression.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitMemberVariableDeclaration = function (node) {
+        this.addChild('MemberVariableDeclarationSyntax');
+        _super.prototype.visitMemberVariableDeclaration.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitBlock = function (node) {
+        this.addChild('BlockSyntax', '{ ... }');
+        _super.prototype.visitBlock.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitBinaryExpression = function (node) {
+        this.addChild('BinaryExpressionSyntax');
+        _super.prototype.visitBinaryExpression.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitInvocationExpression = function (node) {
+        this.addChild('InvocationExpressionSyntax', 'call()');
+        _super.prototype.visitInvocationExpression.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitReturnStatement = function (node) {
+        this.addChild('ReturnStatementSyntax', 'return');
+        _super.prototype.visitReturnStatement.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitSimpleArrowFunctionExpression = function (node) {
+        this.addChild('SimpleArrowFunctionExpressionSyntax', '=>');
+        _super.prototype.visitSimpleArrowFunctionExpression.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitArrayLiteralExpression = function (node) {
+        this.addChild('ArrayLiteralExpressionSyntax', '[]');
+        _super.prototype.visitArrayLiteralExpression.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitGetAccessor = function (node) {
+        this.addChild('GetAccessorSyntax', 'getter');
+        _super.prototype.visitGetAccessor.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitSetAccessor = function (node) {
+        this.addChild('SetAccessorSyntax', 'getter');
+        _super.prototype.visitSetAccessor.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitForStatement = function (node) {
+        this.addChild('ForStatementSyntax', 'for');
+        _super.prototype.visitForStatement.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitElseClause = function (node) {
+        this.addChild('ElseClauseSyntax', 'else');
+        _super.prototype.visitElseClause.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitParenthesizedExpression = function (node) {
+        this.addChild('ParenthesizedExpressionSyntax', '(...Expression...)');
+        _super.prototype.visitParenthesizedExpression.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitObjectLiteralExpression = function (node) {
+        this.addChild('ObjectLiteralExpressionSyntax', '{...Members...}');
+        _super.prototype.visitObjectLiteralExpression.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitToken = function (token) {
+        switch (token.tokenKind) {
+            case TypeScript.SyntaxKind.NumericLiteral:
+            case TypeScript.SyntaxKind.StringLiteral:
+            case TypeScript.SyntaxKind.PlusPlusToken:
+            case TypeScript.SyntaxKind.PlusToken:
+            case TypeScript.SyntaxKind.IdentifierName:
+            case TypeScript.SyntaxKind.MinusToken:
+            case TypeScript.SyntaxKind.MinusMinusToken:
+            case TypeScript.SyntaxKind.TildeToken:
+            case TypeScript.SyntaxKind.SlashToken:
+            case TypeScript.SyntaxKind.SlashEqualsToken:
+            case TypeScript.SyntaxKind.PlusEqualsToken:
+            case TypeScript.SyntaxKind.MinusEqualsToken:
+            case TypeScript.SyntaxKind.TildeToken:
+            case TypeScript.SyntaxKind.LessThanToken:
+            case TypeScript.SyntaxKind.LessThanLessThanEqualsToken:
+            case TypeScript.SyntaxKind.LessThanLessThanToken:
+            case TypeScript.SyntaxKind.LessThanEqualsToken:
+            case TypeScript.SyntaxKind.GreaterThanToken:
+            case TypeScript.SyntaxKind.GreaterThanEqualsToken:
+            case TypeScript.SyntaxKind.GreaterThanGreaterThanEqualsToken:
+            case TypeScript.SyntaxKind.GreaterThanGreaterThanGreaterThanToken:
+            case TypeScript.SyntaxKind.ExclamationToken:
+            case TypeScript.SyntaxKind.AsteriskToken:
+            case TypeScript.SyntaxKind.AsteriskEqualsToken:
+            case TypeScript.SyntaxKind.EqualsToken:
+            case TypeScript.SyntaxKind.EqualsEqualsToken:
+            case TypeScript.SyntaxKind.QuestionToken:
+            case TypeScript.SyntaxKind.PublicKeyword:
+            case TypeScript.SyntaxKind.PrivateKeyword:
+            case TypeScript.SyntaxKind.ExportKeyword:
+            case TypeScript.SyntaxKind.TrueKeyword:
+            case TypeScript.SyntaxKind.FalseKeyword:
+            case TypeScript.SyntaxKind.DebuggerKeyword:
+            case TypeScript.SyntaxKind.DeclareKeyword:
+                this.addChild(TypeScript.SyntaxKind[token.tokenKind], token.text());
+                _super.prototype.visitToken.call(this, token);
+                this.popChildren();
+                return;
+            default:
+                _super.prototype.visitToken.call(this, token);
+                return;
+        }
+    };
+
+    D3TreeBuilder.prototype.visitThrowStatement = function (node) {
+        this.addChild('ThrowStatementSyntax', 'throw');
+        _super.prototype.visitThrowStatement.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitTryStatement = function (node) {
+        this.addChild('TryStatementSyntax', 'try');
+        _super.prototype.visitTryStatement.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitFinallyClause = function (node) {
+        this.addChild('FinallyClauseSyntax', 'finally');
+        _super.prototype.visitFinallyClause.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitCatchClause = function (node) {
+        this.addChild('CatchClauseSyntax', 'catch');
+        _super.prototype.visitCatchClause.call(this, node);
+        this.popChildren();
+    };
+
+    D3TreeBuilder.prototype.visitFunctionExpression = function (node) {
+        this.addChild('FunctionExpressionSyntax', 'function(){...}');
+        _super.prototype.visitFunctionExpression.call(this, node);
+        this.popChildren();
     };
     return D3TreeBuilder;
 })(TypeScript.SyntaxWalker);
@@ -155,7 +357,7 @@ function update(source) {
     });
 
     nodeEnter.append("svg:text").attr("y", function (d) {
-        return d.children || d._children ? -5 : 5;
+        return d.children || d._children ? -10 : 10;
     }).attr("xy", ".35em").attr("text-anchor", function (d) {
         return d.children || d._children ? "end" : "start";
     }).text(function (d) {
@@ -228,7 +430,7 @@ function parse(source) {
     //var compiler = new TypeScript.TypeScriptCompiler(new Logger(), TypeScript.ImmutableCompilationSettings.fromCompilationSettings(settings));
     var text = TypeScript.SimpleText.fromString(source);
 
-    var parser = TypeScript.Parser.parse('#source', text, false, new TypeScript.ParseOptions(1 /* EcmaScript5 */, true));
+    var parser = TypeScript.Parser.parse('#source', text, false, new TypeScript.ParseOptions(TypeScript.LanguageVersion.EcmaScript5, true));
 
     var d3builder = new D3TreeBuilder();
 
@@ -246,9 +448,11 @@ $(function () {
     });
 
     vis = d3.select("#tree").append("svg:svg").attr("width", w + m.left + m.right).attr("height", h + m.top + m.bottom).append("svg:g").attr("transform", "translate(" + m.left + "," + m.top + ")");
-
+    var parser = _.throttle(function (source) {
+        return parse(source);
+    }, 1000, { leading: false });
     $('#source').bind('keyup', function () {
-        parse($(this).val());
+        parser($(this).val());
     });
 });
 //# sourceMappingURL=app.js.map
